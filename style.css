@@ -1,0 +1,106 @@
+*,
+::before,
+::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+html {
+  font-size: 16px;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100svh;
+}
+
+main {
+  width: 400px;
+  height: 600px;
+  /* margin: 0 auto; */
+  background-color: darkgrey;
+  border-radius: 20px;
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+  gap: 5px;
+  animation: fade-out 0.3s;
+}
+
+@keyframes fade-out {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+main .window {
+  width: 100%;
+  background-color: rgb(107, 106, 106);
+  height: 100px;
+  border-radius: 20px;
+  flex: 0 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.window p,
+h1 {
+  margin: 0 1rem;
+  padding: 0;
+}
+
+.window .input {
+  font-size: 3em;
+}
+
+.window .operations {
+  font-size: 1.5em;
+}
+
+main .buttons-container {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  border-radius: 20px;
+  flex: 2;
+  gap: 2px;
+}
+
+main .remove-input {
+  display: flex;
+  gap: 2px;
+  flex: 0 1 65px;
+}
+
+.remove-input button {
+  flex: 1;
+}
+
+button {
+  background-color: rgb(69, 67, 67);
+  border: none;
+  color: #efefef;
+  /* height: 5rem; */
+  border-radius: 10px;
+  transition: ease-out 0.06s;
+  font-size: 1.5em;
+}
+
+button:hover {
+  background-color: rgb(42, 42, 42);
+}
+
+.clicked {
+  transform: scale(1.05);
+}
