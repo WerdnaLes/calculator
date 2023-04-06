@@ -1,3 +1,11 @@
+:root {
+  --dim-gray: #625f63;
+  --btn-main: #3e3c3e;
+  --btn-upper: #72727e;
+  --border: #1c1c1c;
+  --shadow: rgb(47, 47, 47);
+}
+
 *,
 ::before,
 ::after {
@@ -18,19 +26,23 @@ body {
   justify-content: center;
   align-items: center;
   height: 100svh;
+  background-color: rgb(30, 30, 36);
 }
 
 main {
   width: 400px;
   height: 600px;
   /* margin: 0 auto; */
-  background-color: darkgrey;
+  /* background-color: rgb(94, 94, 94); */
+  background-color: black;
   border-radius: 20px;
   display: flex;
   flex-direction: column;
   padding: 8px;
   gap: 5px;
-  animation: fade-out 0.3s;
+  animation: fade-out 0.8s;
+  border: 5px solid var(--border);
+  box-shadow: 0px 0px 5px 5px var(--shadow);
 }
 
 @keyframes fade-out {
@@ -44,14 +56,15 @@ main {
 
 main .window {
   width: 100%;
-  background-color: rgb(107, 106, 106);
+  background-color: var(--btn-upper);
   height: 100px;
-  border-radius: 20px;
+  border-radius: 10px;
   flex: 0 1 auto;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: flex-end;
+  box-shadow: 0px 0px 2px 2px var(--shadow);
 }
 
 .window p,
@@ -88,19 +101,52 @@ main .remove-input {
 }
 
 button {
-  background-color: rgb(69, 67, 67);
+  background-color: var(--btn-main);
   border: none;
   color: #efefef;
   /* height: 5rem; */
   border-radius: 10px;
   transition: ease-out 0.06s;
   font-size: 1.5em;
+  cursor: pointer;
+
+  position: relative;
+
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000,
+    1px 1px 0 #000;
+
+  box-shadow: 0px 0px 1px 1px var(--shadow);
 }
 
-button:hover {
-  background-color: rgb(42, 42, 42);
+button::before {
+  content: ""; /* Add an empty content to the pseudo-element */
+  position: absolute; /* Set the position to absolute */
+  top: 0; /* Position the overlay at the top of the button */
+  left: 0; /* Position the overlay at the left of the button */
+  width: 100%; /* Set the width to 100% of the button */
+  height: 100%; /* Set the height to 100% of the button */
+  background-color: transparent; /* Set the default overlay color to transparent */
+  transition: background-color 0.3s ease; /* Add a transition effect for smooth animation */
+  border-radius: 10px;
+}
+
+button:hover::before {
+  background-color: rgba(0, 0, 0, 0.3); /* Add a darker overlay on hover */
+}
+
+button span.dim {
+  position: relative; /* Set the position to relative */
+  z-index: 1; /* Set a higher z-index to position the text on top of the pseudo-element */
 }
 
 .clicked {
   transform: scale(1.05);
+}
+
+.orange-buttons {
+  background-color: #f6ae2d;
+}
+
+.grey-buttons {
+  background-color: var(--btn-upper); /*lighter grey*/
 }
