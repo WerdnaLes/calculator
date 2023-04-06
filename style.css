@@ -73,11 +73,11 @@ h1 {
   padding: 0;
 }
 
-.window .input {
+.window #input {
   font-size: 3em;
 }
 
-.window .operations {
+.window #operations {
   font-size: 1.5em;
 }
 
