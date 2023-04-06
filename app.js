@@ -22,10 +22,13 @@ const numbers = [
   "=",
 ];
 
+const regex = /[÷×\-\+\=]/;
+const grey = /[%x²C]$/;
+
 function initButtons() {
   for (let i = 0; i < numbers.length; i++) {
     const newBtn = document.createElement("button");
-    newBtn.textContent = numbers[i];
+    newBtn.innerHTML = `<span class="dim">${numbers[i]}</span>`;
     buttonsContainer.appendChild(newBtn);
   }
   addButtonsListeners();
@@ -34,6 +37,12 @@ function initButtons() {
 function addButtonsListeners() {
   const button = document.querySelectorAll("button");
   button.forEach((btn) => {
+    if (regex.test(btn.textContent)) {
+      btn.classList.add("orange-buttons");
+    }
+    if (grey.test(btn.textContent)) {
+      btn.classList.add("grey-buttons");
+    }
     btn.addEventListener("click", clickBtn);
     btn.addEventListener("transitionend", remove);
   });
