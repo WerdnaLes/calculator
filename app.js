@@ -209,7 +209,7 @@ function removeNumber() {
 }
 
 function clear() {
-  input.textContent = "";
+  input.textContent = "0";
   operations.textContent = "";
   currentOperation = null;
   firstOperand = "";
