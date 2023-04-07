@@ -79,7 +79,6 @@ h1 {
   font-size: 3em;
   max-width: 90%;
   overflow: hidden;
-  /* text-overflow: ellipsis; */
   white-space: nowrap;
 }
 

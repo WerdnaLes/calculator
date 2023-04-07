@@ -218,7 +218,6 @@ function handleKeyListener(element) {
     updateInput(convertOperator(keyPressed));
   }
   if (keyPressed === "Enter") updateInput("=");
-
   if (keyPressed === "Backspace") removeNumber();
   if (keyPressed === "Escape") clearAll();
   if (keyPressed === "c") resetInput();
