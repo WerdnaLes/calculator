@@ -75,6 +75,10 @@ h1 {
 
 .window #input {
   font-size: 3em;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .window #operations {

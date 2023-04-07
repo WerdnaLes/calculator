@@ -24,16 +24,24 @@ const numbers = [
   "=",
 ];
 
-let isOperation = false;
-let sum = [];
-let lastNumber = 0;
+let shouldResetScreen = false;
+let currentOperation = null;
+let firstOperand = "";
+let secondOperand = "";
 
 const isOrangeBtn = /[÷×\-\+\=]/;
 const isGreyBtn = /[%x²C]$/;
+const isNumberBtn = /[0-9]/;
+const isOperationButton = /[÷×\-\+\=%x²C]$/;
 
 function initButtons() {
   for (let i = 0; i < numbers.length; i++) {
     const newBtn = document.createElement("button");
+    if (numbers[i].match(/[÷×\-\+\=%x²C]$/)) {
+      newBtn.classList.add("operator-button");
+    } else if (numbers[i].match(/[0-9]$/)) {
+      newBtn.classList.add("number-button");
+    }
     newBtn.innerHTML = `<span class="dim">${numbers[i]}</span>`;
     buttonsContainer.appendChild(newBtn);
   }
@@ -50,7 +58,7 @@ function addButtonsListeners() {
       btn.classList.add("grey-buttons");
     }
     btn.addEventListener("click", addClicked);
-    btn.addEventListener("transitionend", removeClocked);
+    btn.addEventListener("transitionend", removeClicked);
   });
 }
 
@@ -59,7 +67,7 @@ function addClicked(e) {
   updateInput(e.target);
 }
 
-function removeClocked(e) {
+function removeClicked(e) {
   if (e.propertyName !== "transform") {
     return;
   }
@@ -68,40 +76,67 @@ function removeClocked(e) {
 
 function updateInput(e) {
   const buttonText = e.textContent;
-  if (input.textContent === "0") input.textContent = "";
-  if (buttonText.match(/[0-9]/)) {
-    if (input.textContent === lastNumber) {
-      input.textContent = "";
+  if (buttonText.match(isNumberBtn)) {
+    if (input.textContent === "0" || shouldResetScreen) {
+      resetScreen();
     }
     // operations.textContent = "";
-    input.textContent += buttonText;
-    isOperation = false;
-  }
-
-  if (buttonText.match(isOrangeBtn)) {
-    if (!isOperation) {
-      lastNumber = +input.textContent;
-      sum.push(lastNumber);
-      if (buttonText === "+") {
-        input.textContent = add(sum);
-        lastNumber = input.textContent;
-      }
-      if (buttonText === "-") {
-      }
-      isOperation = true;
+    if (input.textContent.length < 14) {
+      input.textContent += buttonText;
     }
-    operations.textContent = `${lastNumber} ${buttonText}`;
+  }
+
+  if (buttonText.match(isOperationButton)) {
+    if (currentOperation !== null) evaluate();
+    firstOperand = input.textContent;
+    currentOperation = buttonText;
+    operations.textContent = `${firstOperand} ${currentOperation}`;
+    shouldResetScreen = true;
   }
 }
 
-function add(args) {
-  let sum = 0;
-  args.forEach((el) => (sum += el));
-  return sum;
+function add(a, b) {
+  return a + b;
 }
 
-function subtract(args) {
-  
+function subtract(a, b) {
+  return a - b;
+}
+
+function resetScreen() {
+  input.textContent = "";
+  shouldResetScreen = false;
+}
+
+function evaluate() {
+  if (currentOperation === null || shouldResetScreen) return;
+  if (currentOperation === "÷" && input.textContent === "0") {
+    alert("you can't divide by 0!");
+    return;
+  }
+  secondOperand = input.textContent;
+  input.textContent = roundResult(
+    operate(currentOperation, firstOperand, secondOperand)
+  );
+  operations.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
+  currentOperation = null;
+}
+
+function roundResult(number) {
+  return Math.round(number * 1000) / 1000;
+}
+
+function operate(operator, a, b) {
+  a = Number(a);
+  b = Number(b);
+  switch (operator) {
+    case "+":
+      return add(a, b);
+    case "-":
+      return subtract(a, b);
+    default:
+      return null;
+  }
 }
 
 window.onload = () => {
