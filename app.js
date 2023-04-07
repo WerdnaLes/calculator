@@ -22,7 +22,7 @@ const numbers = [
 ];
 const buttonsContainer = document.querySelector(".buttons-container");
 const input = document.querySelector("#input");
-const operations = document.querySelector("#operations");
+const operation = document.querySelector("#operations");
 const clearBtn = document.querySelector("#clear");
 const removeBtn = document.querySelector("#delete");
 
@@ -33,19 +33,15 @@ let secondOperand = "";
 let resetOperations = false;
 let wasEqual = false;
 
-const isOrangeBtn = /[÷×\-\+\=]/;
-const isGreyBtn = /[%x²C]$/;
-const isNumberBtn = /[0-9]$/;
+const btnMakeOrangeReg = /[÷×\-\+\=]/;
+const btnMakeGreyReg = /[%x²C]$/;
+const isNumberBtn = /^[0-9]$/;
 const isOperationButton = /[÷×\-\+\%]$/;
+const keyOperationButtons = /^[%\/*\-\+\=]$/;
 
 function initButtons() {
   for (let i = 0; i < numbers.length; i++) {
     const newBtn = document.createElement("button");
-    if (numbers[i].match(isOperationButton)) {
-      newBtn.classList.add("operator-button");
-    } else if (numbers[i].match(isNumberBtn)) {
-      newBtn.classList.add("number-button");
-    }
     newBtn.innerHTML = `<span class="dim">${numbers[i]}</span>`;
     buttonsContainer.appendChild(newBtn);
   }
@@ -55,25 +51,29 @@ function initButtons() {
 function addButtonsListeners() {
   const button = document.querySelectorAll("button");
   button.forEach((btn) => {
-    if (isOrangeBtn.test(btn.textContent)) {
+    if (btnMakeOrangeReg.test(btn.textContent)) {
       btn.classList.add("orange-buttons");
     }
-    if (isGreyBtn.test(btn.textContent)) {
+    if (btnMakeGreyReg.test(btn.textContent)) {
       btn.classList.add("grey-buttons");
     }
     btn.addEventListener("click", addClicked);
     btn.addEventListener("transitionend", removeClicked);
   });
 
-  clearBtn.addEventListener("click", clear);
+  clearBtn.addEventListener("click", clearAll);
   removeBtn.addEventListener("click", removeNumber);
+
+  window.addEventListener("keydown", handleKeyListener);
 }
 
+// Add scaling animation when clicked:
 function addClicked(e) {
   this.classList.add("clicked");
   updateInput(e.target);
 }
 
+// Remove scaling animation when clicked:
 function removeClicked(e) {
   if (e.propertyName !== "transform") {
     return;
@@ -82,7 +82,7 @@ function removeClicked(e) {
 }
 
 function updateInput(e) {
-  const buttonText = e.textContent;
+  const buttonText = typeof e === "object" ? e.textContent : e;
   if (buttonText.match(isNumberBtn)) {
     if (input.textContent === "0" || shouldResetScreen || wasEqual) {
       resetScreen();
@@ -97,32 +97,16 @@ function updateInput(e) {
     if (currentOperation !== null) evaluate(buttonText);
     firstOperand = input.textContent;
     currentOperation = buttonText;
-    operations.textContent = `${firstOperand} ${currentOperation}`;
+    operation.textContent = `${firstOperand} ${currentOperation}`;
     shouldResetScreen = true;
   }
 
   // Special buttons:
-  if (buttonText === "x²") {
-    square(input.textContent);
-  }
-
-  if (buttonText === "=") {
-    evaluate(buttonText);
-  }
-
-  if (buttonText === "C") {
-    input.textContent = "0";
-  }
-
-  if (buttonText === "±") {
-    if (input.textContent !== "0") {
-      input.textContent = -input.textContent;
-    }
-  }
-
-  if (buttonText === ".") {
-    input.textContent += ".";
-  }
+  if (buttonText === "x²") square(input.textContent);
+  if (buttonText === "=") evaluate(buttonText);
+  if (buttonText === "C") resetInput();
+  if (buttonText === "±") toggleNegative();
+  if (buttonText === ".") appendPoint();
 }
 
 function add(a, b) {
@@ -142,7 +126,7 @@ function divide(a, b) {
 }
 
 function square(a) {
-  operations.textContent = `${a}² =`;
+  operation.textContent = `${a}² =`;
   input.textContent = roundResult(a * a);
 }
 
@@ -154,7 +138,8 @@ function resetScreen() {
   input.textContent = "";
   shouldResetScreen = false;
   if (wasEqual) {
-    operations.textContent = "";
+    // Reset input if click number after pressing 'equals'
+    operation.textContent = "";
     wasEqual = false;
   }
 }
@@ -170,8 +155,8 @@ function evaluate(button) {
     operate(currentOperation, firstOperand, secondOperand)
   );
   if (button === "=") {
-    wasEqual = true;
-    operations.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
+    wasEqual = true; // Reset input if click number after pressing 'equals'
+    operation.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
   }
   currentOperation = null;
 }
@@ -180,6 +165,7 @@ function roundResult(number) {
   return Math.round(number * 1000) / 1000;
 }
 
+// Make mathematical equasions when there are two operands:
 function operate(operator, a, b) {
   a = Number(a);
   b = Number(b);
@@ -199,6 +185,7 @@ function operate(operator, a, b) {
   }
 }
 
+// Remove a single number from input
 function removeNumber() {
   const main = input.textContent;
   if (main.length > 1 && main !== "0") {
@@ -208,13 +195,57 @@ function removeNumber() {
   }
 }
 
-function clear() {
+function clearAll() {
   input.textContent = "0";
-  operations.textContent = "";
+  operation.textContent = "";
   currentOperation = null;
   firstOperand = "";
   secondOperand = "";
   wasEqual = false;
+}
+
+// Handle keyboard input:
+function handleKeyListener(element) {
+  const keyPressed = element.key;
+  if (keyPressed === "s") {
+    updateInput("x²");
+  }
+  if (keyPressed.match(isNumberBtn)) {
+    updateInput(keyPressed);
+  }
+  if (keyPressed.match(keyOperationButtons)) {
+    updateInput(convertOperator(keyPressed));
+  }
+  if (keyPressed === "Enter") updateInput("=");
+  if (keyPressed === "Backspace") removeNumber();
+  if (keyPressed === "Escape") clearAll();
+  if (keyPressed === "c") resetInput();
+  if (keyPressed === "n") toggleNegative();
+  if (keyPressed === ".") appendPoint();
+}
+
+function convertOperator(keyboardOperator) {
+  if (keyboardOperator === "/") return "÷";
+  if (keyboardOperator === "*") return "×";
+  if (keyboardOperator === "-") return "-";
+  return keyboardOperator;
+}
+
+function resetInput() {
+  input.textContent = "0";
+}
+
+// Toggle negative or positive input number:
+function toggleNegative() {
+  if (input.textContent !== "0") {
+    input.textContent = -input.textContent;
+  }
+}
+
+function appendPoint() {
+  if (input.textContent.indexOf(".") < 0) {
+    input.textContent += ".";
+  }
 }
 
 window.onload = () => {
