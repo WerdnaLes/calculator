@@ -217,9 +217,8 @@ function handleKeyListener(element) {
   if (keyPressed.match(keyOperationButtons)) {
     updateInput(convertOperator(keyPressed));
   }
-  if (keyPressed === "Enter") {
-    updateInput("=");
-  }
+  if (keyPressed === "Enter") updateInput("=");
+
   if (keyPressed === "Backspace") removeNumber();
   if (keyPressed === "Escape") clearAll();
   if (keyPressed === "c") resetInput();
