@@ -28,18 +28,20 @@ let shouldResetScreen = false;
 let currentOperation = null;
 let firstOperand = "";
 let secondOperand = "";
+let resetOperations = false;
+let wasEqual = false;
 
 const isOrangeBtn = /[÷×\-\+\=]/;
 const isGreyBtn = /[%x²C]$/;
-const isNumberBtn = /[0-9]/;
-const isOperationButton = /[÷×\-\+\=%x²C]$/;
+const isNumberBtn = /[0-9]$/;
+const isOperationButton = /[÷×\-\+\%]$/;
 
 function initButtons() {
   for (let i = 0; i < numbers.length; i++) {
     const newBtn = document.createElement("button");
-    if (numbers[i].match(/[÷×\-\+\=%x²C]$/)) {
+    if (numbers[i].match(isOperationButton)) {
       newBtn.classList.add("operator-button");
-    } else if (numbers[i].match(/[0-9]$/)) {
+    } else if (numbers[i].match(isNumberBtn)) {
       newBtn.classList.add("number-button");
     }
     newBtn.innerHTML = `<span class="dim">${numbers[i]}</span>`;
@@ -77,21 +79,25 @@ function removeClicked(e) {
 function updateInput(e) {
   const buttonText = e.textContent;
   if (buttonText.match(isNumberBtn)) {
-    if (input.textContent === "0" || shouldResetScreen) {
+    if (input.textContent === "0" || shouldResetScreen || wasEqual) {
       resetScreen();
     }
-    // operations.textContent = "";
     if (input.textContent.length < 14) {
       input.textContent += buttonText;
     }
   }
 
   if (buttonText.match(isOperationButton)) {
-    if (currentOperation !== null) evaluate();
+    wasEqual = false;
+    if (currentOperation !== null) evaluate(buttonText);
     firstOperand = input.textContent;
     currentOperation = buttonText;
     operations.textContent = `${firstOperand} ${currentOperation}`;
     shouldResetScreen = true;
+  }
+
+  if (buttonText === "=") {
+    evaluate(buttonText);
   }
 }
 
@@ -103,12 +109,24 @@ function subtract(a, b) {
   return a - b;
 }
 
+function multiply(a, b) {
+  return a * b;
+}
+
+function divide(a, b) {
+  return a / b;
+}
+
 function resetScreen() {
   input.textContent = "";
   shouldResetScreen = false;
+  if (wasEqual) {
+    operations.textContent = "";
+    wasEqual = false;
+  }
 }
 
-function evaluate() {
+function evaluate(button) {
   if (currentOperation === null || shouldResetScreen) return;
   if (currentOperation === "÷" && input.textContent === "0") {
     alert("you can't divide by 0!");
@@ -119,6 +137,9 @@ function evaluate() {
     operate(currentOperation, firstOperand, secondOperand)
   );
   operations.textContent = `${firstOperand} ${currentOperation} ${secondOperand} =`;
+  if (button === "=") {
+    wasEqual = true;
+  }
   currentOperation = null;
 }
 
@@ -134,6 +155,10 @@ function operate(operator, a, b) {
       return add(a, b);
     case "-":
       return subtract(a, b);
+    case "×":
+      return multiply(a, b);
+    case "÷":
+      return divide(a, b);
     default:
       return null;
   }
