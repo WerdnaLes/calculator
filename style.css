@@ -4,6 +4,8 @@
   --btn-upper: #72727e;
   --border: #1c1c1c;
   --shadow: rgb(47, 47, 47);
+  --light-red: #db5461;
+  --light-blue: #90baad;
 }
 
 *,
@@ -75,9 +77,9 @@ h1 {
 
 .window #input {
   font-size: 3em;
-  max-width: 100%;
+  max-width: 90%;
   overflow: hidden;
-  text-overflow: ellipsis;
+  /* text-overflow: ellipsis; */
   white-space: nowrap;
 }
 
@@ -141,6 +143,14 @@ button:hover::before {
 button span.dim {
   position: relative; /* Set the position to relative */
   z-index: 1; /* Set a higher z-index to position the text on top of the pseudo-element */
+}
+
+#clear {
+  background-color: var(--light-red);
+}
+
+#delete {
+  background-color: var(--light-blue);
 }
 
 .clicked {
