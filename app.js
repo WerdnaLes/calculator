@@ -87,9 +87,7 @@ function updateInput(e) {
     if (input.textContent === "0" || shouldResetScreen || wasEqual) {
       resetScreen();
     }
-    if (input.textContent.length < 14) {
-      input.textContent += buttonText;
-    }
+    input.textContent += buttonText;
   }
 
   if (buttonText.match(isOperationButton)) {
@@ -222,7 +220,7 @@ function handleKeyListener(element) {
   }
   if (keyPressed === "Backspace") removeNumber();
   if (keyPressed === "Escape") clearAll();
-  if (keyPressed === "c") resetInput();
+  // if (keyPressed === "c") resetInput();
   if (keyPressed === "n") toggleNegative();
   if (keyPressed === ".") appendPoint();
 }
